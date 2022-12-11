@@ -26,7 +26,7 @@ There are two types of ports in gem5: master ports and slave ports. Whenever you
 
 The figure below outlines the simplest interaction between a master and slave port. This figure shows the interaction in timing mode. The other modes are much simpler and use a simple callchain between the master and the slave.
 
-(picture)
+![picture1](https://github.com/jianshanglaoge/gem5Tutorial/blob/master/Memory_System/master_slave_1.png)
 
 As mentioned above, all of the port interfaces require a PacketPtr as a parameter. Each of these functions (sendTimingReq, recvTimingReq, etc.), accepts a single parameter, a PacketPtr. This packet is the request or response to send or receive.
 
@@ -42,19 +42,20 @@ Later in master-slave-example-section we will show the example code for these fu
 
 It is possible that the master or slave is busy when they receive a request or a response. The figure below shows the case where the slave is busy when the original request was sent.
 
-(picture)
+![picture2](https://github.com/jianshanglaoge/gem5Tutorial/blob/master/Memory_System/master_slave_2.png)
 
 In this case, the slave returns false from the recvTimingReq function. When a master receives false after calling sendTimingReq, it must wait until the its function recvReqRetry is executed. Only when this function is called is the master allowed to retry calling sendTimingRequest. The above figure shows the timing request failing once, but it could fail any number of times. Note: it is up to the master to track the packet that fails, not the slave. The slave does not keep the pointer to the packet that fails.
 
 Similarly, this figure shows the case when the master is busy at the time the slave tries to send a response. In this case, the slave cannot call sendTimingResp until it receives a recvRespRetry.
 
-(picture)
+![picture3](https://github.com/jianshanglaoge/gem5Tutorial/blob/master/Memory_System/master_slave_3.png)
 
 Importantly, in both of these cases, the retry codepath can be a single call stack. For instance, when the master calls sendRespRetry, recvTimingReq can also be called in the same call stack. Therefore, it is easy to incorrectly create an infinite recursion bug, or other bugs. It is important that before a memory object sends a retry, that it is ready at that instant to accept another packet.
 
 ## Simple memory object example
 In this section, we will build a simple memory object. Initially, it will simply pass requests through from the CPU-side (a simple CPU) to the memory-side (a simple memory bus). See the figure below. It will have a single master port, to send requests to the memory bus, and two cpu-side ports for the instruction and data cache ports of the CPU. In the next chapter simplecache-chapter, we will add the logic to make this object a cache.
-(picture)
+
+![picture4](https://github.com/jianshanglaoge/gem5Tutorial/blob/master/Memory_System/simple_memobj.png)
 
 ## Declare the SimObject
 Just like when we were creating the simple SimObject in hello-simobject-chapter, the first step is to create a SimObject Python file. We will call this simple memory object SimpleMemobj and create the SimObject Python file in src/learning_gem5/simple_memobj.
@@ -434,7 +435,7 @@ You can download the implementation for the SimpleMemobj here.
 
 The following figure shows the relationships between the CPUSidePort, MemSidePort, and SimpleMemobj. This figure shows how the peer ports interact with the implementation of the SimpleMemobj. Each bold function is one that we had to implement, and the non-bold functions are the port interfaces to the peer ports. The colors highlight one API path through the object (e.g., receiving a request or updating the memory ranges).
 
-(picture)
+![picture5](https://github.com/jianshanglaoge/gem5Tutorial/blob/master/Memory_System/memobj_api.png)
 
 For this simple memory object, packets are just forwarded from the CPU-side to the memory side. However, by modifying handleRequest and handleResponse, we can create rich featureful objects, like a cache in the next chapter.
 
