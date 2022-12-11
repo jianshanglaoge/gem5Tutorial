@@ -484,8 +484,13 @@ system.cache.missLatency::total                   365                       # Ti
 system.cache.hitRatio                        0.963876                       # The ratio of hits to the total accesses to the cache (Ratio)
 ```
 
+## Extend Lab: Finding the relationship between size of the cache and hitRatio
 
+In this lab, we want try to find the relationship between cache size and hit ratio. We reset the cache size in the script
 
+```
+system.cache = SimpleCache(size='1kB')
+```
 
-
+The value of cache will be changed from 1kB, 2kB, 4kB, 8kB, 16kB, 32kB, 64kB, 128kB. And we create a histogram to show if this relationship is linear?
 
